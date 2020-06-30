@@ -34,15 +34,18 @@ protected:
 public:
 	class Iterator : public BidirectionalIterator<BidirectionalNode, T>
 	{
-	public: 
+	public:
 		using BidirectionalIterator<BidirectionalNode, T>::p;
 		using ValueType = typename BidirectionalIterator<BidirectionalNode, T>::ValueType;
 		using Pointer = typename BidirectionalIterator<BidirectionalNode, T>::Pointer;
 		using Reference = typename BidirectionalIterator<BidirectionalNode, T>::Reference;
 
-		Iterator(Pointer p) : BidirectionalIterator<BidirectionalNode, T>(p) {}
-		void advanceBack() { if (p) p = p->prev(); }
-		void advance() { if (p) p = (BidirectionalNode*)p->next(); }
+	    Pointer _tail;
+		Pointer _head;
+
+		Iterator(Pointer p, Pointer head,  Pointer tail) : BidirectionalIterator<BidirectionalNode, T>(p), _head(head),  _tail(tail) {}
+		void advanceBack() { if (p) p = p->prev(); else p = _tail; }
+		void advance() { if (p) p = (BidirectionalNode*)p->next(); else p = _head; }
 		Reference operator*() const { return p->value(); }
 		bool operator==(const Iterator& rhs) const { return p == rhs.p; }
 		bool operator!=(const Iterator& rhs) const { return p != rhs.p; }
@@ -50,12 +53,11 @@ public:
 		Iterator& operator--() { advanceBack(); return *this; }
 	};
 
-	using List<T>::begin;
-	using List<T>::end;
-	/*Iterator begin() { return  Iterator(head); }
-	Iterator end() { return  Iterator(nullptr); }*/
-	Iterator rbegin() { return  Iterator(nullptr); }
-	Iterator rend() { return  Iterator(tail); }
+	
+	Iterator begin() { return  Iterator((BidirectionalNode*)head, (BidirectionalNode*)head,tail); }
+	Iterator end() { return  Iterator(nullptr, (BidirectionalNode*)head,tail); }
+	Iterator rbegin() { return  Iterator(nullptr, (BidirectionalNode*)head,tail); }
+	Iterator rend() { return  Iterator(tail, (BidirectionalNode*)head,tail); }
 
 	// constructors
 	BidirectionalList() : List<T>::List(), tail(nullptr) {}
@@ -156,7 +158,7 @@ BidirectionalList<T>& BidirectionalList<T>::operator=(BidirectionalList&& other)
 		other.head = nullptr;
 		other.tail = nullptr;
 	}
-		return *this;
+	return *this;
 }
 
 template<typename T>
@@ -187,7 +189,7 @@ void BidirectionalList<T>::addToEnd(int val)
 		add(val);
 	else
 	{
-		tail->next(new BidirectionalNode(val, nullptr,tail));
+		tail->next(new BidirectionalNode(val, nullptr, tail));
 		tail = (BidirectionalNode*)tail->next();
 	}
 }
@@ -202,7 +204,8 @@ void BidirectionalList<T>::removeFirst()
 	BidirectionalNode* p = ((BidirectionalNode*)head);
 	// reassign the first node:
 	head = p->next();
-	((BidirectionalNode*)head)->prev(nullptr);
+	if (head)
+		((BidirectionalNode*)head)->prev(nullptr);
 	// avoid dangling pointer
 	p->next(nullptr);
 	// recover memory used by the first element

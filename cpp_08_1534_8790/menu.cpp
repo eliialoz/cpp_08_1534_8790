@@ -27,8 +27,8 @@ const char* MenuOptionLine[LAST_MENU_OPTION + 1] {
 	"Check whether the list is empty",
 	"Sort the list",
 	"Print the max value in the list",
-	"Print the list from the end",
-	"Print the list from the begin"
+	"Print as a list ",
+	"Print as a Bidirectionallist "
 };
 
 istream& operator>>(istream& in, MenuOption& rhs) {

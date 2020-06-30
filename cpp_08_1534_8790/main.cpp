@@ -64,8 +64,8 @@ int main() {
 				cout << "Not empty" << endl;
 			break;
 		case SORT:
-			sort<List<int>::Iterator>((ls1.begin()), ls1.end(),
-				[](List<int>::Iterator::Reference numA, List<int>::Iterator::Reference numB)
+			sort<BidirectionalList<int>::Iterator>((ls1.begin()), ls1.end(),
+				[](BidirectionalList<int>::Iterator::Reference numA, List<int>::Iterator::Reference numB)
 				{
 					if (numA > numB)
 						return 1;
@@ -77,18 +77,21 @@ int main() {
 			break;
 
 		case MAX:
-			cout << "the max value is - " << *(max<List<int>::Iterator>(ls1.begin(), ls1.end())) << endl;
+			cout << "the max value is - " << *(max<BidirectionalList<int>::Iterator>(ls1.begin(), ls1.end())) << endl;
 			break;
 
-		case PRINT_END:
-			//using BidirectionalIterator(rend & rbegin return BidirectionalIterator)
-			for (auto itReverse = ls1.rend(); itReverse != ls1.rbegin();cout << ((--itReverse != ls1.rbegin()) ? " , " : "\n"))
-				cout << *itReverse;
-			break;
-		case PRINT:
-			//using ForwardIterator(rend & rbegin return ForwardIterator)
-			for (auto itForward = ls1.begin(); itForward != ls1.end(); cout << ((++itForward != ls1.end()) ? " , " : "\n"))
+		case PRINT: 
+		{
+			//using ForwardIterator
+			List<int>& ls2 = ls1;
+			for (auto itForward = ls2.begin(); itForward != ls2.end(); cout << ((++itForward != ls2.end()) ? " , " : "\n"))
 				cout << *itForward;
+		}
+			break;
+		case PRINT_B:
+			//using BidirectionalIterator
+			for (auto itReverse = ls1.begin(); itReverse != ls1.end(); cout << ((++itReverse != ls1.end()) ? " , " : "\n"))
+				cout << *itReverse;
 			break;
 		default:
 			cout << "ERROR!" << endl;

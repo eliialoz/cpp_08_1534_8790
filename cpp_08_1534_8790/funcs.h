@@ -26,10 +26,7 @@ template <typename T>
 T partition(T begin, T end, int (*comparator)(typename T::Reference, typename T::Reference))
 {
 	auto par = begin;
-	auto pivot = begin;
-
-	//loop to get the pivot element(last one):
-	for (auto it = begin; ++it != end; ++pivot);
+	auto pivot = --end;
 
 	for (auto i = begin; i != pivot; ++i)
 		if (comparator(*i, *pivot) != 1)
